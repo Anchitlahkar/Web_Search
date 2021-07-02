@@ -32,7 +32,7 @@ mydoc = Document()
 
 def scrape():
 
-    print('\n\n\nPages To Search: ', len(
+    print('\n\nPages To Search: ', len(
         Soup.find_all("div", attrs={"class", "tF2Cxc"})))
 
     for div_f_tag in Soup.find_all("div", attrs={"class", "tF2Cxc"}):
@@ -57,7 +57,7 @@ def scrape():
 
         time.sleep(5)
 
-        print('Page no: ',i+1)
+        print('\nPage no: ',i+1)
 
         print('p: ', len(BeautifulSoup(
             browser.page_source, "html.parser").find_all("p")))
