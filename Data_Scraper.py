@@ -32,11 +32,8 @@ mydoc = Document()
 
 def scrape():
 
-    print('div class(tf2cxc): ', len(
+    print('\n\n\nPages To Search: ', len(
         Soup.find_all("div", attrs={"class", "tF2Cxc"})))
-    print('div class(yuRUbf): ', len(
-        Soup.find_all("div", attrs={"class", "yuRUbf"})))
-    print('a: ', len(Soup.find_all("a", href=True)[0]["href"]))
 
     for div_f_tag in Soup.find_all("div", attrs={"class", "tF2Cxc"}):
         div_S_tags = div_f_tag.find_all("div", attrs={"class", "yuRUbf"})
