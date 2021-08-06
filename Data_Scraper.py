@@ -4,14 +4,14 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 import csv
+import requests
 from docx import Document
 
 query = input('Key Word: ')
 file_name = input('File Name: ')
 
-start_url = "http://google.com/search?q="+query
-browser = webdriver.Chrome(
-    "D:/System install files/chromedriver_win32/chromedriver")
+start_url = "https://www.google.com/"
+browser = webdriver.Chrome("D:/System install files/chromedriver_win32/chromedriver")
 
 time.sleep(3)
 
@@ -19,15 +19,19 @@ browser.get(start_url)
 
 time.sleep(5)
 
+browser.get(start_url+"search?q="+query)
+time.sleep(5)
+
 data = []
 
 Soup = BeautifulSoup(browser.page_source, "html.parser")
 
 raw_text = []
-updated_text = []
 
 
 mydoc = Document()
+
+urlDic ={}
 
 
 def scrape():
@@ -52,39 +56,42 @@ def scrape():
 
         data.append(temp_list)
 
-    for i in range(0, len(data)):
-        browser.get(data[i][0])
 
-        time.sleep(5)
-
-        print('\nPage no: ',i+1)
-
-        p =len(BeautifulSoup(
-            browser.page_source, "html.parser").find_all("p"))        
-        print('p: ', p)
-
-        if p != 0:
-            time.sleep(2)
+    try:
+        for i in range(0, len(data)):
+            browser = requests.get(data[i][0])
     
-            raw_text.append(BeautifulSoup(
-                    browser.page_source, "html.parser").find_all("p"))
+            print('\nPage no: ',i+1)
     
-            raw_text.append('...............................................................................................................................................................................................................'+
-                                '........................Url:'+str(data[i])+'.....................................................................................................................................................................'+
-                            '...............................................................................................................................................................................................................')
-
-        else:
-            time.sleep(2)
+            time.sleep(5)
     
-            raw_text.append(BeautifulSoup(
-                    browser.page_source, "html.parser").find_all("p"))
+            p = len(BeautifulSoup(browser.content, "html.parser").find_all("p"))        
+            print('p: ', p)
     
-            raw_text.append('...............................................................................................................................................................................................................'+
-                                '................Unable To Featch Results---Please Check The URL,     url: '+str(data[i])+'      .........................................................................................................................................'+
-                            '...............................................................................................................................................................................................................')
+            if p != 0:
+                time.sleep(2)
+            
+                raw_text.append(BeautifulSoup(browser.content, "html.parser").find_all("p"))
+            
+                raw_text.append('...............................................................................................................................................................................................................'+
+                                    f'........................Url:{str(data[i][0])}.....................................................................................................................................................................'+
+                                '...............................................................................................................................................................................................................')
+    
+            else:
+                time.sleep(2)
+            
+                raw_text.append(BeautifulSoup(
+                        browser.content, "html.parser").find_all("p"))
+            
+                raw_text.append('...............................................................................................................................................................................................................'+
+                                    f'................Unable To Featch Results---Please Check The URL,     url: {str(data[i][0])}      .........................................................................................................................................'+
+                                    '...............................................................................................................................................................................................................')
+    
+    except:
+        print('\n\nError Occured!!!!\n\n Unable to fetch result right now.')
+        
 
-
-    with open("url.csv", "w") as f:
+    with open("Data/"+file_name+"_url.csv", "w") as f:
         csv_Writter = csv.writer(f)
         csv_Writter.writerows(data)
 
@@ -105,7 +112,9 @@ def remove_tags(text):
         a_tag_words.append(data)
         temp_text.append(' '.join(soup.stripped_strings))
 
-    print('\n\n\n', a_tag_words)
+    # print('\n\n\n', a_tag_words)
+
+    # temp_text.append([i.text.rstrip() for i in soup.find_all("p")])
 
 
     para = temp_text
@@ -113,12 +122,12 @@ def remove_tags(text):
     try:
         mydoc.add_heading(query)
         mydoc.add_paragraph(para[0])
-        mydoc.save(file_name+" Data.docx")
+        mydoc.save("Data/"+file_name+" Data.docx")
 
     except:
         mydoc.add_heading(query)
         mydoc.add_paragraph(para)
-        mydoc.save(file_name+" Data_1.docx")
+        mydoc.save("Data/"+file_name+" Data.docx")
 
     # print('\n\n\n para: ', para)
 
