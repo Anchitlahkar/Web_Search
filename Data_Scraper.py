@@ -6,6 +6,7 @@ import time
 import csv
 import requests
 from docx import Document
+import os
 
 query = input('Key Word: ')
 file_name = input('File Name: ')
@@ -36,8 +37,8 @@ urlDic ={}
 
 def scrape():
 
-    print('\n\nPages To Search: ', len(
-        Soup.find_all("div", attrs={"class", "tF2Cxc"})))
+    pageToSearch =  len(
+        Soup.find_all("div", attrs={"class", "tF2Cxc"}))
 
     for div_f_tag in Soup.find_all("div", attrs={"class", "tF2Cxc"}):
         div_S_tags = div_f_tag.find_all("div", attrs={"class", "yuRUbf"})
@@ -55,6 +56,8 @@ def scrape():
                     temp_list.append('')
 
         data.append(temp_list)
+        os.system('CLS')
+        print('\n\nPages To Search: ',pageToSearch)
 
 
     try:
@@ -63,7 +66,7 @@ def scrape():
     
             print('\nPage no: ',i+1)
     
-            time.sleep(5)
+            time.sleep(2.5)
     
             p = len(BeautifulSoup(browser.content, "html.parser").find_all("p"))        
             print('p: ', p)
