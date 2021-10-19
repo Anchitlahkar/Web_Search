@@ -1,5 +1,3 @@
-from os import replace
-from typing import final
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
@@ -12,7 +10,7 @@ query = input('Key Word: ')
 file_name = input('File Name: ')
 
 start_url = "https://www.google.com/"
-browser = webdriver.Chrome("D:/System install files/chromedriver_win32/chromedriver")
+browser = webdriver.Chrome("D:/System_File/chromedriver_win32/chromedriver")
 
 time.sleep(3)
 
