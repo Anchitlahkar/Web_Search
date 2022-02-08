@@ -10,7 +10,8 @@ query = input('Key Word: ')
 file_name = input('File Name: ')
 
 start_url = "https://www.google.com/"
-browser = webdriver.Chrome("D:/System_File/chromedriver_win32/chromedriver.exe")
+browser = webdriver.Chrome(
+    "D:/System_File/chromedriver_win32/chromedriver.exe")
 
 
 time.sleep(5)
@@ -22,21 +23,20 @@ time.sleep(5)
 browser.get(start_url+"search?q="+query)
 time.sleep(5)
 
-data = []
+data = []       # Will store all the urls after finding
 
 Soup = BeautifulSoup(browser.page_source, "html.parser")
 
 raw_text = []
-
+remove_urls = []
 
 mydoc = Document()
 
-urlDic ={}
 
-
+# Will Search urls for the topic in the browser and take the text part of each page
 def scrape():
 
-    pageToSearch =  len(
+    pageToSearch = len(
         Soup.find_all("div", attrs={"class", "tF2Cxc"}))
 
     for div_f_tag in Soup.find_all("div", attrs={"class", "tF2Cxc"}):
@@ -55,43 +55,42 @@ def scrape():
                     temp_list.append('')
 
         data.append(temp_list)
-        os.system('CLS')
-        print('\n\nPages To Search: ',pageToSearch)
 
+    os.system('CLS')
+    print("This Process require time. Please be Patient!!!")
+    print('\n\nPages To Search: ', pageToSearch)
 
     try:
-        for i in range(0, len(data)):
+        for i in range(len(data)):
             browser = requests.get(data[i][0])
-    
-            print('\nPage no: ',i+1)
-    
-            time.sleep(2.5)
-    
-            p = len(BeautifulSoup(browser.content, "html.parser").find_all("p"))        
+
+            print('\nPage no: ', i+1)
+
+            p = len(BeautifulSoup(browser.content, "html.parser").find_all("p"))
             print('p: ', p)
-    
+
             if p != 0:
                 time.sleep(2)
-            
-                raw_text.append(BeautifulSoup(browser.content, "html.parser").find_all("p"))
-            
-                raw_text.append('...............................................................................................................................................................................................................'+
-                                    f'........................Url:{str(data[i][0])}.....................................................................................................................................................................'+
-                                '...............................................................................................................................................................................................................')
-    
+
+                raw_text.append(BeautifulSoup(
+                    browser.content, "html.parser").find_all("p"))
+
+                raw_text.append(
+                    "                                                    ")
             else:
                 time.sleep(2)
-            
-                raw_text.append(BeautifulSoup(
-                        browser.content, "html.parser").find_all("p"))
-            
-                raw_text.append('...............................................................................................................................................................................................................'+
-                                    f'................Unable To Featch Results---Please Check The URL,     url: {str(data[i][0])}      .........................................................................................................................................'+
-                                    '...............................................................................................................................................................................................................')
-    
+                print(f"Unable to fetch data from the Url: {str(data[i][0])}")
+                print(
+                    "Data From this site will not be Recorded. skipping to the next...")
+                remove_urls.append(data[i])
+
     except:
         print('\n\nError Occured!!!!\n\n Unable to fetch result right now.')
-        
+        print("Data Which was collected is been Stored\n\n")
+
+    for i in remove_urls:
+        idx = data.index(i)
+        data.pop(idx)
 
     with open("Data/"+file_name+"_url.csv", "w") as f:
         csv_Writter = csv.writer(f)
@@ -109,7 +108,6 @@ def remove_tags(text):
         data.decompose()
         temp_text.append(' '.join(soup.stripped_strings))
 
-
     for data in soup("a"):
         a_tag_words.append(data)
         temp_text.append(' '.join(soup.stripped_strings))
@@ -117,7 +115,6 @@ def remove_tags(text):
     # print('\n\n\n', a_tag_words)
 
     # temp_text.append([i.text.rstrip() for i in soup.find_all("p")])
-
 
     para = temp_text
 
@@ -131,7 +128,7 @@ def remove_tags(text):
         mydoc.add_paragraph(para)
         mydoc.save("Data/"+file_name+" Data.docx")
 
-    # print('\n\n\n para: ', para)
+    print("\n\nData has Been Stored")
 
 
 scrape()
