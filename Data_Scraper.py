@@ -10,9 +10,10 @@ query = input('Key Word: ')
 file_name = input('File Name: ')
 
 start_url = "https://www.google.com/"
-browser = webdriver.Chrome("D:/System_File/chromedriver_win32/chromedriver")
+browser = webdriver.Chrome("D:/System_File/chromedriver_win32/chromedriver.exe")
 
-time.sleep(3)
+
+time.sleep(5)
 
 browser.get(start_url)
 
